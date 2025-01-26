@@ -72,6 +72,8 @@ func Eval(node ast.Node , env *object.Environment) object.Object {
 		}
 
 		return applyFunction(function , args)
+	case *ast.StringLiteral:
+		return &object.String{Value: node.Value}
 	}
 
 	return nil
@@ -273,7 +275,6 @@ func evalBlockStatement(block *ast.BlockStatement , env *object.Environment) obj
 	}
 	return result
 }
-
 
 func newError(format string , a ...interface{}) *object.Error{
 	return &object.Error{Message: fmt.Sprintf(format , a...)  }
