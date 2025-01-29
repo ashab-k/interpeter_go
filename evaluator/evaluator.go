@@ -80,7 +80,7 @@ func Eval(node ast.Node , env *object.Environment) object.Object {
 }
 
 func applyFunction(fn object.Object, args []object.Object ) object.Object{
-	
+
 	switch fn := fn.(type) {
 	case *object.Function:
 		extendedEnv := extendFunctionEnvironment(fn, args)
@@ -136,7 +136,7 @@ func evalIdentifier( node *ast.Identifier , env *object.Environment) object.Obje
 		return builtin
 	}
 
-	return newError("identifier not found: " + node.Value)
+	return newError("identifier not found: %s" , node.Value)
 }
 
 
