@@ -327,6 +327,17 @@ func TestBuiltinFunctions(t *testing.T) {
 	{`len("hello world")`, 11},
 	{`len(1)`, "argument to `len` not supported, got INTEGER"},
 	{`len("one", "two")`, "wrong number of arguments. got=2, want=1"},
+	{`first([1, 2, 3])`, 1},
+	{`first([])`, NULL},
+	{`first(1)`, "argument to `first` must be ARRAY, got INTEGER"},
+	{`last([1, 2, 3])`, 3},
+	{`last([])`, NULL},
+	{`last(1)`, "argument to `last` must be ARRAY, got INTEGER"},
+	{`rest([1, 2, 3])`, []int{2, 3}},
+	{`rest([])`, NULL},
+	{`push([], 1)`, []int{1}},
+	{`push(1, 1)`, "argument to `push` must be ARRAY, got INTEGER"},
+
 	}
 
 	for _, tt := range tests {
@@ -411,4 +422,44 @@ func testIntegerObject(t *testing.T, obj object.Object, expected int64) bool {
 
 	return true
 
+}
+
+func TestHashLiterals(t *testing.T) {
+	input := `let two = "two";
+	{
+		"one": 10 - 9,
+		two: 1 + 1,
+		"thr" + "ee": 6 / 2,
+		4: 4,
+		true: 5,
+		false: 6
+	}`
+
+	evaluated := testEval(input)
+	result, ok := evaluated.(*object.Hash)
+	if !ok {
+		t.Fatalf("Eval didn't return Hash. got=%T (%+v)", evaluated, evaluated)
+	}
+
+	expected := map[object.HashKey]int64{
+		(&object.String{Value: "one"}).HashKey():   1,
+		(&object.String{Value: "two"}).HashKey():   2,
+		(&object.String{Value: "three"}).HashKey(): 3,
+		(&object.Integer{Value: 4}).HashKey():      4,
+		TRUE.HashKey():                             5,
+		FALSE.HashKey():                            6,
+	}
+
+	if len(result.Pairs) != len(expected) {
+		t.Fatalf("Hash has wrong number of pairs. got=%d", len(result.Pairs))
+	}
+
+	for expectedKey, expectedValue := range expected {
+		pair, ok := result.Pairs[expectedKey]
+		if !ok {
+			t.Errorf("no pair for given key in Pairs")
+		}
+
+		testIntegerObject(t, pair.Value, expectedValue)
+	}
 }
