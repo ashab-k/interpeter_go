@@ -18,7 +18,7 @@ Simian is a lightweight and expressive custom programming language with a simple
 1. Clone the repository:
 
    ```bash
-   git clone <your-repo-url>
+   git clone https://github.com/ashab-k/interpeter_go.git
    cd simian-lang
    ```
 
