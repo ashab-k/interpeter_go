@@ -44,7 +44,8 @@ func RunCodeHandler(w http.ResponseWriter, r *http.Request) {
 
 	if evaluated != nil {
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(evaluated.Inspect()))
+    
+       w.Write([]byte(evaluated.Inspect()))
 	} else {
 		http.Error(w, "Execution resulted in null output", http.StatusInternalServerError)
 	}

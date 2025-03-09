@@ -2,15 +2,17 @@ package main
 
 import (
 	"fmt"
-	"net/http"
-
-	"interpreter/endpoint"
+	"interpreter/repl"
+	"os"
+	"os/user"
 )
 
 func main() {
- mux := http.NewServeMux()
- 
- mux.HandleFunc("/run" , endpoint.RunCodeHandler )
- fmt.Println("Listening on port 8080")
- http.ListenAndServe(":8080" , mux)
+	user, err := user.Current()
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("Hello %s! This is the Monkey programming language!\n", user.Username)
+	fmt.Printf("Feel free to type in commands\n")
+	repl.Start(os.Stdin, os.Stdout)
 }
